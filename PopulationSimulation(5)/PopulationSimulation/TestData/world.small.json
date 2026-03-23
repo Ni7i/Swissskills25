@@ -1,0 +1,41 @@
+{
+  "locations": [
+    { "icon": "🏠", "name": "Palmstreet 1", "x": 2000, "y": 2500 },
+    { "icon": "🏠", "name": "Caveroad 11", "x": 4500, "y": 5000 },
+    { "icon": "🏭", "name": "Coal mine", "x": 8000, "y": 2000 },
+    { "icon": "🛎", "name": "Donald's Kings", "x": 3000, "y": 7500 }
+  ],
+  "citizens": [
+    {
+      "icon": "👨",
+      "firstName": "Flint",
+      "lastName": "Weststone",
+      "home": "Caveroad 11",
+      "schedule": [
+        { "time": "07:15", "location": "Coal mine", "activity": "working" },
+        { "time": "16:45", "location": "Donald's Kings", "activity": "dining" },
+        { "time": "18:45", "location": "Caveroad 11", "activity": "resting" }
+      ]
+    },
+    {
+      "icon": "👩",
+      "firstName": "Pamela",
+      "lastName": "Hunter",
+      "home": "Palmstreet 1",
+      "schedule": [
+        { "time": "08:00", "location": "Coal mine", "activity": "working" },
+        { "time": "17:00", "location": "Palmstreet 1", "activity": "resting" }
+      ]
+    },
+    {
+      "icon": "👴",
+      "firstName": "Jack",
+      "lastName": "Master",
+      "home": "Palmstreet 1",
+      "schedule": [
+        { "time": "09:00", "location": "Donald's Kings", "activity": "dining" },
+        { "time": "11:00", "location": "Palmstreet 1", "activity": "resting" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="PopulationSimulation.Views.IconPickerDialog"
+        Title="Select Icon" Width="420" Height="320"
+        WindowStartupLocation="CenterOwner" CanResize="False" ShowInTaskbar="False">
+    <DockPanel Margin="10">
+        <Button DockPanel.Dock="Bottom" Content="Cancel" HorizontalAlignment="Right"
+                Width="80" Margin="0,10,0,0" Click="Cancel_Click"/>
+        <ScrollViewer>
+            <WrapPanel x:Name="IconPanel"/>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

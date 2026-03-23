@@ -1,0 +1,257 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:PopulationSimulation.Views"
+        x:Class="PopulationSimulation.MainWindow"
+        Title="Population Simulation Prototype"
+        MinWidth="1100" MinHeight="700"
+        Width="1400" Height="850"
+        WindowState="Maximized">
+
+    <Grid ColumnDefinitions="*,5,420">
+
+        <!-- LEFT: Map + Controls -->
+        <DockPanel Grid.Column="0" Margin="5">
+
+            <!-- Top bar -->
+            <Grid DockPanel.Dock="Top" Margin="0,0,0,5" ColumnDefinitions="Auto,*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="File" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <Button Content="Open" Command="{Binding LoadWorldCommand}" Padding="8,4"
+                            IsEnabled="{Binding IsNotRunning}"/>
+                    <Button Content="Save" Command="{Binding SaveWorldCommand}" Padding="8,4"
+                            IsEnabled="{Binding IsNotRunning}"/>
+                    <Button Content="Exit" Command="{Binding ExitCommand}" Padding="8,4"/>
+                </StackPanel>
+                <TextBlock Grid.Column="1" Text="{Binding SimDateFormatted}"
+                           FontSize="16" FontWeight="Bold"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4">
+                    <Button Content="{Binding PlayPauseText}" Command="{Binding PlayPauseCommand}"
+                            FontSize="16" Width="44" Height="32"/>
+                    <Button Content="+ step" Command="{Binding StepCommand}" Padding="8,4"
+                            IsEnabled="{Binding IsNotRunning}"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Map -->
+            <Border BorderBrush="Gray" BorderThickness="1" Background="#222831" ClipToBounds="True">
+                <views:MapControl x:Name="MapDisplay"
+                                  Locations="{Binding Locations}"
+                                  Citizens="{Binding Citizens}"
+                                  SelectedCitizen="{Binding SelectedCitizen}"
+                                  SelectedLocation="{Binding SelectedLocationEditor}"/>
+            </Border>
+        </DockPanel>
+
+        <GridSplitter Grid.Column="1" Width="5" Background="#DDD"/>
+
+        <!-- RIGHT PANEL -->
+        <Grid Grid.Column="2" Margin="5" RowDefinitions="Auto,5,*,5,Auto">
+
+            <!-- People List -->
+            <DockPanel Grid.Row="0" MaxHeight="200">
+                <TextBlock DockPanel.Dock="Top" Text="People" FontSize="14" FontWeight="Bold" Margin="0,0,0,5"/>
+                <ListBox ItemsSource="{Binding Citizens}"
+                         SelectedItem="{Binding SelectedCitizen}"
+                         IsEnabled="{Binding IsNotRunning}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DisplayName}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+
+            <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" Background="#DDD"/>
+
+            <!-- Citizen Editor -->
+            <DockPanel Grid.Row="2">
+                <TextBlock DockPanel.Dock="Top" Text="Selected Person" FontSize="14" FontWeight="Bold" Margin="0,0,0,5"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                              IsEnabled="{Binding HasSelectedCitizen}">
+                    <StackPanel>
+
+                        <!-- Icon + Names row -->
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" Margin="0,0,0,8">
+
+                            <Button Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"
+                                    Content="{Binding SelectedCitizen.Icon}"
+                                    FontSize="36" Width="60" Height="60"
+                                    Margin="0,0,10,0" VerticalAlignment="Top"
+                                    Command="{Binding ChangeCitizenIconCommand}"
+                                    IsEnabled="{Binding IsNotRunning}"/>
+
+                            <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,4">
+                                <TextBlock Text="Firstname" FontSize="11" Foreground="Gray"/>
+                                <TextBox Text="{Binding SelectedCitizen.FirstName, Mode=TwoWay}"
+                                         IsEnabled="{Binding IsNotRunning}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,0,4">
+                                <TextBlock Text="Lastname" FontSize="11" Foreground="Gray"/>
+                                <TextBox Text="{Binding SelectedCitizen.LastName, Mode=TwoWay}"
+                                         IsEnabled="{Binding IsNotRunning}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,4,0,4">
+                                <TextBlock FontSize="11" Foreground="Gray" Text="🏠 Home Address"/>
+                                <ComboBox x:Name="HomeComboBox"
+                                          ItemsSource="{Binding Locations}"
+                                          IsEnabled="{Binding IsNotRunning}"
+                                          SelectionChanged="HomeCombo_Changed"
+                                          HorizontalAlignment="Stretch">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <Run Text="{Binding Icon}"/>
+                                                <Run Text=" "/>
+                                                <Run Text="{Binding Name}"/>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,4,0,8"
+                                       Text="{Binding SelectedCitizen.Status, StringFormat='Status: {0}'}"
+                                       FontWeight="SemiBold" Foreground="#2196F3"/>
+                        </Grid>
+
+                        <!-- Schedule Editor -->
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,4" Spacing="8">
+                                <TextBlock Text="Schedule" FontSize="14" FontWeight="Bold"/>
+                                <Button Content="+ Add" Command="{Binding AddScheduleEventCommand}"
+                                        FontSize="11" Padding="6,2" IsEnabled="{Binding IsNotRunning}"/>
+                            </StackPanel>
+
+                            <!-- Header -->
+                            <Grid DockPanel.Dock="Top" Margin="0,0,0,2" ColumnDefinitions="58,*,*,50,50,50,28">
+                                <TextBlock Grid.Column="0" Text="Time" FontWeight="Bold" FontSize="11"/>
+                                <TextBlock Grid.Column="1" Text="Location" FontWeight="Bold" FontSize="11"/>
+                                <TextBlock Grid.Column="2" Text="Activity" FontWeight="Bold" FontSize="11"/>
+                                <TextBlock Grid.Column="3" Text="Travel" FontWeight="Bold" FontSize="11"/>
+                                <TextBlock Grid.Column="4" Text="Spend" FontWeight="Bold" FontSize="11"/>
+                                <TextBlock Grid.Column="5" Text="Total" FontWeight="Bold" FontSize="11"/>
+                            </Grid>
+
+                            <!-- Schedule events (sorted by time) -->
+                            <ItemsControl ItemsSource="{Binding SelectedScheduleSorted}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="0,1" Padding="2"
+                                                Classes.conflict="{Binding IsConflict}">
+                                            <Border.Styles>
+                                                <Style Selector="Border.conflict">
+                                                    <Setter Property="Background" Value="#44FF0000"/>
+                                                </Style>
+                                            </Border.Styles>
+                                            <Grid ColumnDefinitions="58,*,*,50,50,50,28">
+                                                <!-- Time -->
+                                                <TextBox Grid.Column="0" Text="{Binding Time, Mode=TwoWay}"
+                                                         FontSize="11" Margin="0,0,2,0"
+                                                         LostFocus="Schedule_LostFocus"
+                                                         IsEnabled="{Binding $parent[Window].DataContext.IsNotRunning}"/>
+
+                                                <!-- Location (name string ComboBox) -->
+                                                <ComboBox Grid.Column="1" FontSize="11" Margin="0,0,2,0"
+                                                          x:Name="LocCombo"
+                                                          ItemsSource="{Binding $parent[Window].DataContext.Locations}"
+                                                          SelectionChanged="ScheduleLoc_Changed"
+                                                          IsEnabled="{Binding $parent[Window].DataContext.IsNotRunning}"
+                                                          Loaded="ScheduleLocCombo_Loaded">
+                                                    <ComboBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock>
+                                                                <Run Text="{Binding Icon}"/>
+                                                                <Run Text=" "/>
+                                                                <Run Text="{Binding Name}"/>
+                                                            </TextBlock>
+                                                        </DataTemplate>
+                                                    </ComboBox.ItemTemplate>
+                                                </ComboBox>
+
+                                                <!-- Activity with autocomplete -->
+                                                <AutoCompleteBox Grid.Column="2" FontSize="11" Margin="0,0,2,0"
+                                                    Text="{Binding Activity, Mode=TwoWay}"
+                                                    ItemsSource="{Binding $parent[Window].DataContext.ActivitySuggestions}"
+                                                    FilterMode="Contains"
+                                                    IsEnabled="{Binding $parent[Window].DataContext.IsNotRunning}"/>
+
+                                                <TextBlock Grid.Column="3" Text="{Binding TravelFormatted}"
+                                                           FontSize="11" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="4" Text="{Binding SpendFormatted}"
+                                                           FontSize="11" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="5" Text="{Binding TotalFormatted}"
+                                                           FontSize="11" VerticalAlignment="Center"/>
+
+                                                <Button Grid.Column="6" Content="✕" FontSize="10"
+                                                        Command="{Binding $parent[Window].DataContext.RemoveScheduleEventCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        VerticalAlignment="Center" Width="22" Height="22"
+                                                        IsEnabled="{Binding $parent[Window].DataContext.IsNotRunning}"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DockPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+
+            <GridSplitter Grid.Row="3" Height="5" HorizontalAlignment="Stretch" Background="#DDD"/>
+
+            <!-- Locations -->
+            <DockPanel Grid.Row="4" MaxHeight="260">
+                <TextBlock DockPanel.Dock="Top" Text="Locations" FontSize="14" FontWeight="Bold" Margin="0,0,0,5"/>
+                <Grid ColumnDefinitions="*,*">
+                    <ListBox Grid.Column="0" ItemsSource="{Binding Locations}"
+                             SelectedItem="{Binding SelectedLocationEditor}"
+                             IsEnabled="{Binding IsNotRunning}" Margin="0,0,5,0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <Run Text="{Binding Icon}"/>
+                                    <Run Text=" "/>
+                                    <Run Text="{Binding Name}"/>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <StackPanel Grid.Column="1" IsEnabled="{Binding HasSelectedLocationEditor}">
+                        <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,5">
+                            <Button Grid.Column="0" Content="{Binding SelectedLocationEditor.Icon}"
+                                    FontSize="28" Width="44" Height="44" Margin="0,0,8,0"
+                                    Command="{Binding ChangeLocationIconCommand}"
+                                    IsEnabled="{Binding IsNotRunning}"/>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="Name" FontSize="11" Foreground="Gray"/>
+                                <TextBox Text="{Binding SelectedLocationEditor.Name, Mode=TwoWay}"
+                                         IsEnabled="{Binding IsNotRunning}"
+                                         LostFocus="LocName_LostFocus"/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid ColumnDefinitions="*,*">
+                            <StackPanel Grid.Column="0" Margin="0,0,4,0">
+                                <TextBlock Text="X (0-10000)" FontSize="11" Foreground="Gray"/>
+                                <TextBox x:Name="LocXBox"
+                                         Text="{Binding SelectedLocationEditor.X, Mode=TwoWay, StringFormat='{}{0:F0}'}"
+                                         IsEnabled="{Binding IsNotRunning}"
+                                         LostFocus="LocCoord_LostFocus"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Y (0-10000)" FontSize="11" Foreground="Gray"/>
+                                <TextBox x:Name="LocYBox"
+                                         Text="{Binding SelectedLocationEditor.Y, Mode=TwoWay, StringFormat='{}{0:F0}'}"
+                                         IsEnabled="{Binding IsNotRunning}"
+                                         LostFocus="LocCoord_LostFocus"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </DockPanel>
+        </Grid>
+    </Grid>
+</Window>
