@@ -2,7 +2,6 @@
 # ============================================
 # Run this to prepare the delivery ZIP
 # Works on macOS, builds for Windows
-# ============================================
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
