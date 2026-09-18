@@ -4,7 +4,7 @@
 1. Navigate to the `executable` folder
 2. Run `PopulationSimulation.exe`
 
-## Build from Source (requires .NET 8 SDK)
+## Build from Source (requires .NET 10 SDK)
 ```bash
 cd source
 dotnet restore PopulationSimulation.sln
@@ -18,8 +18,8 @@ dotnet publish PopulationSimulation/PopulationSimulation.csproj -c Release -r wi
 ```
 
 ## Technology
-- C# / .NET 8
-- Avalonia UI 11 (cross-platform desktop framework, WPF-equivalent)
+- C# / .NET 10
+- Avalonia UI 11.3 (cross-platform desktop framework, WPF-equivalent)
 - MVVM Pattern
 - System.Text.Json for serialization
 - No database (in-memory only, JSON load/save)
